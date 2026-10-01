@@ -1,5 +1,12 @@
 # Wick's Quest Key — Changelog
 
+## 1.0.4 - 2026-10-01
+
+### Fixed
+
+- Loads on the 2.5.6 client without being marked out of date. The addon
+  now lists interface 20506 alongside 20505.
+
 ## 1.0.3 - 2026-05-07
 
 ### Fix: cooldown text was throwing 24,000+ silent errors per session
