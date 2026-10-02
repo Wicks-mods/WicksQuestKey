@@ -97,7 +97,13 @@ btn:SetScript("OnEnter", function(self)
 end)
 btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
+-- With Wick's UI loaded, its movers place the button (/wui move) and this
+-- addon's own drag, lock and reset stand down; WickCore keeps the list.
+local uiMoves = false
+local UI_MOVES = "|cff8a5cf6Wick's Quest Key|r: Wick's UI places the button. Type /wui move to drag it, and right-click its mover to put it back."
+
 local function ApplyPosition()
+    if uiMoves then return end
     local db = WicksQuestKeyDB
     btn:ClearAllPoints()
     btn:SetPoint(db.point, UIParent, db.relativePoint, db.x, db.y)
@@ -117,6 +123,7 @@ local function SetLocked(state)
         print("|cff8a5cf6Wick's Quest Key|r: cannot change lock during combat.")
         return
     end
+    if uiMoves and not state then print(UI_MOVES) return end
     locked = state
     if locked then
         btn:RegisterForDrag()
@@ -130,6 +137,20 @@ end
 
 btn:SetScript("OnDragStart", function(self) if not locked then self:StartMoving() end end)
 btn:SetScript("OnDragStop",  function(self) self:StopMovingOrSizing(); SavePosition() end)
+
+local function RegisterMovable()
+    local Chrome = WickCore and WickCore.Chrome
+    if not (Chrome and Chrome.RegisterMovable) then return end
+    local db = WicksQuestKeyDB
+    Chrome:RegisterMovable(btn, {
+        key = "questkey", title = "Quest Key", addon = "WicksQuestKey",
+        default = ("%s,UIParent,%s,%d,%d"):format(db.point or "CENTER", db.relativePoint or db.point or "CENTER", db.x or 0, db.y or -150),
+        onClaim = function()
+            uiMoves = true
+            if not locked then SetLocked(true) end
+        end,
+    })
+end
 
 local function Arm()
     local cur = items[nextIndex]
@@ -284,7 +305,7 @@ f:RegisterEvent("PLAYER_REGEN_ENABLED")
 f:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 f:RegisterEvent("UPDATE_BINDINGS")
 f:SetScript("OnEvent", function(_, event)
-    if event == "PLAYER_LOGIN" then ApplyPosition(); UpdateBindLabel() end
+    if event == "PLAYER_LOGIN" then RegisterMovable(); ApplyPosition(); UpdateBindLabel() end
     if event == "UPDATE_BINDINGS" then UpdateBindLabel(); return end
     if event == "BAG_UPDATE_DELAYED" then UpdateCount(); return end
     Scan()
@@ -299,6 +320,7 @@ SLASH_WICKSQUESTKEY2 = "/questkey"
 SlashCmdList.WICKSQUESTKEY = function(msg)
     msg = (msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
     if msg == "unlock" or msg == "move" then
+        if uiMoves then print(UI_MOVES) return end
         SetLocked(false)
         print("|cff8a5cf6Wick's Quest Key|r: unlocked. Left-drag the button to move it.")
         return
@@ -307,6 +329,7 @@ SlashCmdList.WICKSQUESTKEY = function(msg)
         print("|cff8a5cf6Wick's Quest Key|r: locked.")
         return
     elseif msg == "reset" then
+        if uiMoves then print(UI_MOVES) return end
         WicksQuestKeyDB.point, WicksQuestKeyDB.relativePoint = "CENTER", "CENTER"
         WicksQuestKeyDB.x, WicksQuestKeyDB.y = 0, -150
         ApplyPosition()

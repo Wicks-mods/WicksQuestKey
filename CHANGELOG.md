@@ -1,5 +1,15 @@
 # Wick's Quest Key — Changelog
 
+## Unreleased
+
+### Added
+
+- With Wick's UI loaded, the button is one of its movers: /wui move
+  drags it with everything else, and it starts where you had it. The
+  addon's own unlock, move and reset commands point there while it is.
+  WickCore is an optional dependency for this; without it, nothing
+  changes.
+
 ## 1.0.4 - 2026-10-01
 
 ### Fixed

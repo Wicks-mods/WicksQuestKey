@@ -4,5 +4,6 @@
 ## Author: Wick
 ## Version: 1.0.4
 ## SavedVariables: WicksQuestKeyDB
+## OptionalDeps: WickCore
 
 WicksQuestKey.lua
