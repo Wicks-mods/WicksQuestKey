@@ -17,12 +17,9 @@
 - Wick's Quest Key now needs WickCore, which is in the same download as
   the rest of the suite. Without it the addon says so once at login and
   does nothing else.
-
 - With Wick's UI loaded, the button is one of its movers: /wui move
   drags it with everything else, and it starts where you had it. The
   addon's own unlock, move and reset commands point there while it is.
-  WickCore is an optional dependency for this; without it, nothing
-  changes.
 
 ## 1.0.4 - 2026-10-01
 
