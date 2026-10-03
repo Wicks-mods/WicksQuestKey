@@ -1,33 +1,61 @@
+-- Wick's Quest Key
+-- One secure button for the quest item you can use right now, drawn in
+-- WickCore's chrome so it follows the suite's look and theme.
+
+local ADDON = ...
+
+local Core = WickCore
+if not Core then
+    -- WickCore is missing or switched off.
+    --
+    -- The TOC asks for it with OptionalDeps rather than Dependencies on
+    -- purpose. A hard dependency makes the client refuse to load this addon
+    -- at all, so nothing of ours runs and the player is told nothing beyond
+    -- a greyed line in the AddOns list. Loading anyway lets us say what is
+    -- wrong and where to get it.
+    --
+    -- One line for the lot of them, not one per addon: with the whole suite
+    -- installed and WickCore switched off, a line each would be a wall.
+    local need = _G.WicksNeedCore
+    if not need then
+        need = {}
+        _G.WicksNeedCore = need
+        local f = CreateFrame("Frame")
+        f:RegisterEvent("PLAYER_LOGIN")
+        f:SetScript("OnEvent", function()
+            table.sort(need)
+            print(("|cff4FC778Wick's Mods|r: %s %s WickCore, which is not installed or not switched on. It is in the same download as the rest of the suite: |cffD4C8A1wicksmods.com|r")
+                :format(table.concat(need, ", "), #need == 1 and "needs" or "need"))
+        end)
+    end
+    need[#need + 1] = "Wick's Quest Key"
+    return
+end
+local Chrome = Core.Chrome
+local C = Chrome.Colors
+
+-- No saved variable through WickCore: WicksQuestKeyDB stays as it is.
+local A = Core:NewAddon("WicksQuestKey", {
+    title   = "Wick's Quest Key",
+    version = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)(ADDON, "Version"),
+})
+
 WicksQuestKeyDB = WicksQuestKeyDB or {
     point = "CENTER", relativePoint = "CENTER", x = 0, y = -150,
 }
 
-local C_BG     = { 0.05, 0.04, 0.08, 0.97 }
-local C_BORDER = { 0.22, 0.18, 0.36, 1 }
-local C_GREEN  = { 0.31, 0.78, 0.47, 1 }
-local C_HOVER  = { 0.31, 0.78, 0.47, 0.10 }
+-- Palette tokens are references into Chrome.Colors, never copies, so a
+-- look or theme change repaints the button at once. The unlock tint is
+-- the addon's own.
+local C_BG     = C.voidBG
+local C_BORDER = C.border
+local C_GREEN  = C.fel
+local C_HOVER  = Chrome:Wash("fel", 0.10)
 local C_MOVE   = { 0.64, 0.21, 0.93, 0.20 }
 
-local function NewTexture(parent, layer, c)
-    local t = parent:CreateTexture(nil, layer)
-    t:SetColorTexture(unpack(c))
-    return t
-end
-
-local function AddBorder(frame, c)
-    local t = NewTexture(frame, "BORDER", c); t:SetPoint("TOPLEFT");    t:SetPoint("TOPRIGHT");    t:SetHeight(1)
-    local b = NewTexture(frame, "BORDER", c); b:SetPoint("BOTTOMLEFT"); b:SetPoint("BOTTOMRIGHT"); b:SetHeight(1)
-    local l = NewTexture(frame, "BORDER", c); l:SetPoint("TOPLEFT");    l:SetPoint("BOTTOMLEFT");  l:SetWidth(1)
-    local r = NewTexture(frame, "BORDER", c); r:SetPoint("TOPRIGHT");   r:SetPoint("BOTTOMRIGHT"); r:SetWidth(1)
-end
-
-local function AddCornerAccents(frame)
-    local L, T = 10, 2
-    for _, anchor in ipairs({ "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT" }) do
-        local h = NewTexture(frame, "OVERLAY", C_GREEN); h:SetPoint(anchor); h:SetSize(L, T)
-        local v = NewTexture(frame, "OVERLAY", C_GREEN); v:SetPoint(anchor); v:SetSize(T, L)
-    end
-end
+local function NewTexture(parent, layer, c) return Chrome:Texture(parent, layer, c) end
+local function AddBorder(frame, c) Chrome:AddBorder(frame, c) end
+local function AddCornerAccents(frame) Chrome:AddBrackets(frame) end
 
 -- TBC Anniversary 2.5.5 moved GetItemCooldown into the C_Container namespace.
 -- Resolve once at load and fall back to the legacy global so older clients still work.
@@ -64,7 +92,7 @@ count:SetPoint("BOTTOMRIGHT", -3, 3)
 btn.count = count
 
 local bindLabel = btn:CreateFontString(nil, "OVERLAY")
-bindLabel:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+Chrome:SetFont(bindLabel, 12, "OUTLINE")
 bindLabel:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
 bindLabel:SetTextColor(1, 1, 1, 1)
 btn.bindLabel = bindLabel
@@ -72,7 +100,7 @@ btn.bindLabel = bindLabel
 -- Cooldown countdown shown bottom-center of the icon. Driven by a throttled
 -- OnUpdate so we don't recompute every frame.
 local cdText = btn:CreateFontString(nil, "OVERLAY")
-cdText:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
+Chrome:SetFont(cdText, 16, "OUTLINE")
 cdText:SetPoint("BOTTOM", btn, "BOTTOM", 0, 3)
 cdText:SetTextColor(1, 0.92, 0.5, 1)  -- warm yellow, like Blizzard's action bar CD
 btn.cdText = cdText
@@ -100,7 +128,7 @@ btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 -- With Wick's UI loaded, its movers place the button (/wui move) and this
 -- addon's own drag, lock and reset stand down; WickCore keeps the list.
 local uiMoves = false
-local UI_MOVES = "|cff8a5cf6Wick's Quest Key|r: Wick's UI places the button. Type /wui move to drag it, and right-click its mover to put it back."
+local UI_MOVES = "Wick's UI places the button. Type /wui move to drag it, and right-click its mover to put it back."
 
 local function ApplyPosition()
     if uiMoves then return end
@@ -120,10 +148,10 @@ end
 local locked = true
 local function SetLocked(state)
     if InCombatLockdown() then
-        print("|cff8a5cf6Wick's Quest Key|r: cannot change lock during combat.")
+        A:Print("cannot change lock during combat.")
         return
     end
-    if uiMoves and not state then print(UI_MOVES) return end
+    if uiMoves and not state then A:Print(UI_MOVES) return end
     locked = state
     if locked then
         btn:RegisterForDrag()
@@ -311,6 +339,38 @@ f:SetScript("OnEvent", function(_, event)
     Scan()
 end)
 
+-- Put the button back where a fresh install has it.
+local function ResetPosition()
+    WicksQuestKeyDB.point, WicksQuestKeyDB.relativePoint = "CENTER", "CENTER"
+    WicksQuestKeyDB.x, WicksQuestKeyDB.y = 0, -150
+    ApplyPosition()
+    A:Print("position reset.")
+end
+
+-- The page under Wick's Mods in the game's Options, and a line in the
+-- suite's launcher that opens it.
+function A:OnEnable()
+    self:RegisterOptions(function(body)
+        local O = Core.Options
+        local y = 0
+        y = O:Note(body, "One button for the quest item you can use right now, armed from the quest log. Left-click it or press its key to use the item; right-click cycles when more than one quest has an item. The key is set under Key Bindings, Wick's Quest Key.", y)
+        y = O:Heading(body, "Place", y)
+        if uiMoves then
+            y = O:Note(body, UI_MOVES, y)
+        else
+            y = O:Check(body, "Unlocked, drag it to move it", function() return not locked end, function(v) SetLocked(not v) end, y)
+            y = O:Button(body, "Put it back in the middle", ResetPosition, y, 200)
+        end
+    end)
+    self:RegisterLauncher({
+        onClick = function() Core.Options:Open("WicksQuestKey") end,
+        tooltip = function(tt)
+            tt:AddLine(Chrome:TitleMarkup("Wick's Quest Key"))
+            tt:AddLine("The quest item button. Click for its settings.", 1, 1, 1)
+        end,
+    })
+end
+
 BINDING_HEADER_WICKSQUESTKEY = "Wicks Quest Key"
 -- Binding name has spaces and a colon, so set the display label via bracket syntax.
 _G["BINDING_NAME_CLICK WicksQuestKeyButton:LeftButton"] = "Use current quest item"
@@ -320,25 +380,22 @@ SLASH_WICKSQUESTKEY2 = "/questkey"
 SlashCmdList.WICKSQUESTKEY = function(msg)
     msg = (msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
     if msg == "unlock" or msg == "move" then
-        if uiMoves then print(UI_MOVES) return end
+        if uiMoves then A:Print(UI_MOVES) return end
         SetLocked(false)
-        print("|cff8a5cf6Wick's Quest Key|r: unlocked. Left-drag the button to move it.")
+        A:Print("unlocked. Left-drag the button to move it.")
         return
     elseif msg == "lock" then
         SetLocked(true)
-        print("|cff8a5cf6Wick's Quest Key|r: locked.")
+        A:Print("locked.")
         return
     elseif msg == "reset" then
-        if uiMoves then print(UI_MOVES) return end
-        WicksQuestKeyDB.point, WicksQuestKeyDB.relativePoint = "CENTER", "CENTER"
-        WicksQuestKeyDB.x, WicksQuestKeyDB.y = 0, -150
-        ApplyPosition()
-        print("|cff8a5cf6Wick's Quest Key|r: position reset.")
+        if uiMoves then A:Print(UI_MOVES) return end
+        ResetPosition()
         return
     elseif msg == "debug" then
         local k1, k2 = GetBindingKey(QK_BINDING)
         local cur = items[nextIndex]
-        print("|cff8a5cf6Wick's Quest Key|r debug:")
+        A:Print("debug:")
         print(("  bind keys: %s | %s"):format(k1 or "(none)", k2 or "(none)"))
         print(("  items loaded: %d  armed index: %d"):format(#items, nextIndex))
         if cur then
@@ -352,11 +409,11 @@ SlashCmdList.WICKSQUESTKEY = function(msg)
         return
     end
     if #items == 0 then
-        print("|cff8a5cf6Wick's Quest Key|r: no usable quest items right now.")
+        A:Print("no usable quest items right now.")
     else
-        print(("|cff8a5cf6Wick's Quest Key|r: %d quest item(s) loaded"):format(#items))
+        A:Print(("%d quest item(s) loaded"):format(#items))
         for i, it in ipairs(items) do
-            local marker = (i == nextIndex) and "  |cff4fc77b<-- armed|r" or ""
+            local marker = (i == nextIndex) and ("  " .. Chrome:Esc("fel") .. "<-- armed|r") or ""
             print(("  %d. %s%s"):format(i, it.name, marker))
         end
     end

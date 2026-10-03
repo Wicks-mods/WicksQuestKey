@@ -4,6 +4,20 @@
 
 ### Added
 
+- The button draws in WickCore's chrome: its colours, border and corner
+  marks come from the look and theme chosen under Wick's Mods in the
+  game's Options, and follow a change at once.
+- A settings page of its own under Wick's Mods: unlock and drag, or put
+  the button back in the middle. With Wick's UI loaded the page says
+  its movers place it instead. The suite's launcher opens the page.
+- Chat lines carry the theme's accent colour.
+
+### Changed
+
+- Wick's Quest Key now needs WickCore, which is in the same download as
+  the rest of the suite. Without it the addon says so once at login and
+  does nothing else.
+
 - With Wick's UI loaded, the button is one of its movers: /wui move
   drags it with everything else, and it starts where you had it. The
   addon's own unlock, move and reset commands point there while it is.
