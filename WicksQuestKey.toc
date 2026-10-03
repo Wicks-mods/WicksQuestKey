@@ -2,7 +2,7 @@
 ## Title: Wick's Quest Key
 ## Notes: Retail-style quest item button. One binding to use the active quest item.
 ## Author: Wick
-## Version: 1.0.4
+## Version: 1.1.0
 ## SavedVariables: WicksQuestKeyDB
 ## OptionalDeps: WickCore
 
