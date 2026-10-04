@@ -2,7 +2,7 @@
 
 > Retail-style ExtraActionButton for TBC Classic. One bind to use the active quest item, auto-detected from your quest log.
 
-Part of the **[Wick Suite](https://github.com/Wicksmods/WickSuite)**.
+Part of the **[Wick Suite](https://github.com/Wicks-mods/WickSuite)**.
 
 ## Pages
 
@@ -12,7 +12,7 @@ Part of the **[Wick Suite](https://github.com/Wicksmods/WickSuite)**.
 
 ## Links
 
-- [GitHub repo](https://github.com/Wicksmods/WicksQuestKey)
+- [GitHub repo](https://github.com/Wicks-mods/WicksQuestKey)
 - [CurseForge](https://www.curseforge.com/wow/addons/wicks-quest-key)
-- [Changelog](https://github.com/Wicksmods/WicksQuestKey/blob/main/CHANGELOG.md)
-- [Report an issue](https://github.com/Wicksmods/WicksQuestKey/issues)
+- [Changelog](https://github.com/Wicks-mods/WicksQuestKey/blob/main/CHANGELOG.md)
+- [Report an issue](https://github.com/Wicks-mods/WicksQuestKey/issues)

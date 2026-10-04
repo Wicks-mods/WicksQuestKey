@@ -34,4 +34,4 @@ TBC Classic only (Interface 20505). Retail already has the ExtraActionButton bui
 
 ### Does it have a config UI?
 
-No — just slash commands and the keybind. The whole point is "one button, one bind, no config." If you want a config UI, [open an issue](https://github.com/Wicksmods/WicksQuestKey/issues) and pitch what you'd want in it.
+No — just slash commands and the keybind. The whole point is "one button, one bind, no config." If you want a config UI, [open an issue](https://github.com/Wicks-mods/WicksQuestKey/issues) and pitch what you'd want in it.

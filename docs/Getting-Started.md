@@ -3,7 +3,7 @@
 ## Install
 
 - **CurseForge client** — search for "Wick's Quest Key".
-- **Manual** — download the latest ZIP from [CurseForge](https://www.curseforge.com/wow/addons/wicks-quest-key) or [GitHub Releases](https://github.com/Wicksmods/WicksQuestKey/releases), extract the `WicksQuestKey` folder into `World of Warcraft\_classic_\Interface\AddOns\`.
+- **Manual** — download the latest ZIP from [CurseForge](https://www.curseforge.com/wow/addons/wicks-quest-key) or [GitHub Releases](https://github.com/Wicks-mods/WicksQuestKey/releases), extract the `WicksQuestKey` folder into `World of Warcraft\_classic_\Interface\AddOns\`.
 
 ## First run
 

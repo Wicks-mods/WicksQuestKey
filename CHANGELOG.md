@@ -69,7 +69,7 @@ Two root causes:
 
 ### Initial release
 
-Retail-style ExtraActionButton for TBC Classic. One bind cycles through every active quest item, auto-detected from your quest log. Brand-consistent with the rest of the [Wick suite](https://github.com/Wicksmods/WickSuite).
+Retail-style ExtraActionButton for TBC Classic. One bind cycles through every active quest item, auto-detected from your quest log. Brand-consistent with the rest of the [Wick suite](https://github.com/Wicks-mods/WickSuite).
 
 - Single 52x52 secure-action button with the Wick chrome (flat purple-black panel, 1px border, fel-green L-bracket corners)
 - Auto-detects quest items via `GetQuestLogSpecialItemInfo`
